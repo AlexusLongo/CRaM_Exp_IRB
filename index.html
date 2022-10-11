@@ -1,0 +1,211 @@
+
+<!DOCTYPE html>
+<html lang=en>
+
+  <head>
+      <meta charset="utf-8" />
+    <script src="sep/utils.js"></script>
+    <script src='sep/ocanvas-2.10.0.js'></script>
+    <script src='sep/ready.js'></script>
+    <script src='sep/instructions.js'></script>
+    <script src='main_sep__.js'></script>
+  </head>
+
+  <body style = 'background: rgb(190,190,190);'>
+    <div id='main'></div>
+
+    <script type="text/javascript">
+
+
+      expId = 'index'
+
+      subject = {
+          id: get_subject_id(),
+          condition: get_condition(), //to get subj cond number, you say subject[condition]
+          results: {
+              'trainList1': [],
+              'recallList1': [],
+              'trainList2': [],
+              'recallList2': [],
+              'trainList3': [],
+              'recallList3': [],
+              'testList0': [],
+              'recallTestList0': [],
+          }
+      }
+
+
+      function getTestList(condNum) {
+        //Pool options.
+        testingPools = {
+          1: ["1", "2", "3", "4", "5", "6"],
+          2: ["One", "Two", "Three", "Four", "Five","Six"],
+          3: ["Doctor", "Lawyer", "Nurse", "Architect", "Teacher",
+          "Judge", "Librarian", "Officer", "Soldier", "Assistant",
+          "Athlete", "Model", "Actor", "Musician", "Politician",
+          "Stylist", "Designer", "Accountant", "Biologist", "Technician",
+          "Researcher", "Carpenter", "Builder", "Artist", "Curator",
+          "Chef", "Pilot", "Waiter", "Engineer", "Announcer",
+          "Bouncer", "Guard", "Hunter", "Fisher", "Farmer",
+          "Landscaper", "Mechanic", "Trainer", "Translator", "Plumber",
+          "Electrician", "Chemist", "Pharmacist"],
+          //A relational test? (SIGNAL)
+          4: ["Light", "Point", "Wave", "Gesture", "Fire",
+          "Indicate", "Warn", "Ping", "Beep", "Blinker",
+          "Flash", "Marker", "Label", "Flare", "Alarm",
+          "Wink", "Cue", "Alert", "Flag", "Omen",
+          "Declare", "Reveal", "Show", "Highlight", "Beckon",
+          "Distinguish"]
+        }
+        //Pool decision for now
+        const testListPool = testingPools[condNum] //When know more about design, this will have an actual logic.
+        //Randomize the pool
+        let currentIndex = testListPool.length, randomIndex;
+        while (currentIndex !=0){
+          randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex--;
+          [testListPool[currentIndex], testListPool[randomIndex]] = [testListPool[randomIndex], testListPool[currentIndex]];
+        }
+        //Test list slice from randomized pool.
+        const testList = testListPool.slice(0, 6)
+        //Gives testList at level of function call so we can use it in many places
+        return testList
+      }
+      //To run: getTestList(subject['condition'])
+      testList = getTestList(3) //Use constant for now.
+      //testList.push(subject[results["testList0"]])//How do I give the data the test list?
+      //Depending on condition, test list will be another training list.
+
+
+
+    function getTrainLists(condNum) {
+      //Pool options.
+      trainingPools = { //pool.
+        1: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"],
+        2: ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l"],
+        //#3 Is the fruit control for control condition
+        3: ["Apple", "Orange", "Banana", "Watermelon", "Cherry",
+        "Blueberry", "Peach", "Pomegranate", "Pineapple", "Grape",
+        "Apricot", "Lemon", "Lime", "Coconut", "Kiwi",
+        "Papaya", "Fig", "Mango","Pear", "Plum",
+        "Avocado", "Strawberry", "Guava", "Raspberry", "Cantaloupe"],
+        //#4 Is the veg control also for testing itself
+        4: ["Carrot", "Potato", "Artichoke", "Broccoli", "Cabbage",
+        "Asparagus", "Bean", "Cauliflower", "Celery", "Pepper",
+        "Cucumber", "Eggplant", "Fennel", "Kale", "Leek",
+        "Okra", "Onion", "Pea", "Corn", "Pumpkin",
+        "Raddish", "Beet", "Shallot", "Spinach", "Turnip",
+        "Yam"],
+        //A relational try? (OBSTACLE)
+        5: ["Fence", "Wall", "Cliff", "Mountain", "Ocean",
+        "Hurdle", "Barrier", "Bump", "Block", "Bar",
+        "Clog", "Obstruct", "Poverty", "Neglect", "Illness",
+        "Illiteracy", "Impediment", "Handicap", "Hardship", "Hinderance",
+        "Injustice", "Weakness", "Burden", "Difficulty", "Interference",
+        "Restriction", "Rule", "Hamper", "Nuisance", "Problem"],
+        //Another relational try (GUIDE)
+        6: ["Map", "Instructions", "Recipe", "Procedure", "Manual",
+        "Criteria", "Example", "Standard", "Catalog", "Directory",
+        "Handbook", "Key", "Model", "Mentor", "Leader",
+        "Boss", "Teacher", "Chaperone", "Conductor", "Controller",
+        "Director", "Guru", "Manager", "Shepherd", "Influence",
+        "Govern", "Oversee", "Regulate", "Steer", "Supervise",
+        "Sway", "Sponsor", "Compel", "Herd", "Urge",
+        "Push", "Order", "Coach"]
+        }
+      //Pool decision for now...
+      const trainListPool = trainingPools[condNum] //When know specifics about design, this will have an actual logic.
+      //Randomize the pool
+      let currentIndex = trainListPool.length, randomIndex;
+      while (currentIndex !=0){
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [trainListPool[currentIndex], trainListPool[randomIndex]] = [trainListPool[randomIndex], trainListPool[currentIndex]];
+      } //At this point TrainListPool is shuffled?
+      //Make the lists and return them at proper level.
+      return trainLists = {
+        "trainList1": trainListPool.slice(0,6), //From index 0 inclusive to index 6 NONINCLUSIVE
+        "trainList2": trainListPool.slice(6,12),
+        "trainList3": trainListPool.slice(12,18)
+      }
+    }
+    //To run: getTrainLists(subject['condition'])
+    getTrainLists(4) //Use constant for now.
+
+
+    // Immediately unpack the train lists for ease of reference?
+    var list1 = trainLists["trainList1"]
+    var list2 = trainLists["trainList2"]
+    var list3 = trainLists["trainList3"]
+    //Depending on condition, test list will be another training list.
+
+    const listDict = {
+    1: list1,
+    2: list2,
+    3: list3,
+    0: testList
+  }
+
+index = 1
+
+      eventGraph = {
+        pageZero: function(){
+          startPage.Consent(eventGraph.pageOne, eventGraph.end)
+        },
+          pageOne: async function(){
+            startPage.startUp(eventGraph.instructions)
+          },
+          instructions: function () {
+              instructions.start(
+                  {text: 'Welcome to the experiment; glad you could join.<br><br> Click next to begin studying your first list...'}, // params
+                  function () { setTimeout(function () { // what to do next = "ready"
+                      eventGraph.listDisplay()
+                  }, 100)}
+              )
+          },
+          listDisplay: function () {
+            listDisplay.start(index % 4, //Mod4 bc we have 4 lists, but I named test list (4th one) "0" bc that feels more special to me.
+            listDict[index % 4],
+            function () {setTimeout(function(){
+              eventGraph.distract()
+            }, 100)}
+            )
+          },
+          distract: function() {
+            distract.start(eventGraph.recallPhase)//Have to tell it to do the next?
+          },
+          recallPhase: function() {
+            recall.start(index % 4, () => {
+              index++
+              if (index < 5) {
+                eventGraph.listDisplay()
+              } else (eventGraph.end())
+
+            }) //Pass listNum and next stage, for now we are making the next stage the end.
+            // Remember: depening on condition, test list will just be another training list.
+            // To push recall results, we will pass in a list number, depending on number we will push recall to correct subj category.
+            // 1=train1; 2=train2; 3=train3; 0=test. Also use listNum for determining end page or not.
+          },
+          end: function () {
+              document.body.innerHTML = '<p>All Finished!</p>'
+              console.log(subject["results"])
+               //function () {
+                  //viewData(JSON.stringify(subject['results']), 'Downloads/test.txt', 'text/plain')//; // <-- spits out the data if you want to look at it; this is whats going to get sent to the server
+                  //next(expId, subject['id'], subject['condition'], subject) // <-- send data to server and start next experiment | this comes from the "utils.js" script
+               //}
+               const buttonNXT = document.createElement("input")
+               buttonNXT.setAttribute("type", "button")
+               buttonNXT.setAttribute("onclick", "location.href='https://binghamton.qualtrics.com/jfe/form/SV_bDb2FuU2cF421W6'")
+               buttonNXT.setAttribute("value", "NEXT EXPERIMENT")
+               document.body.appendChild(buttonNXT)
+               //Need to add button that goes into Keith's experiment. // The LINK: https://binghamton.qualtrics.com/jfe/form/SV_bDb2FuU2cF421W6
+          },  // BUT Keith won't have any subject numbers?
+        }
+          eventGraph.pageZero()
+
+    </script>
+  </body>
+
+
+
+</html>
